@@ -53,6 +53,28 @@ sample, or reduced-dimension version first, confirm the signal is real, and
 only then run the full solve. If the small experiment is slow, noisy, or
 resource-heavy, fix the approach before increasing the input size.
 
+## Communication Guidelines
+
+Keep notes, writeups, prompts, code comments, and filenames clearly scoped to
+authorized CTF challenge work. Prefer precise challenge terminology such as
+`solver`, `payload`, `emulator`, `reversing note`, `primitive`, `kernel read`,
+`memory disclosure`, `sandbox`, and `local reproduction` when those terms
+accurately describe the work.
+
+Avoid sensational, broad, or real-world operational phrasing when a narrower
+CTF description is more accurate. Do not describe work as targeting real
+systems, persistence, stealth, credential theft, deployment, or evasion unless
+that is explicitly part of an authorized challenge artifact and is necessary to
+explain the solution. When discussing remote services, identify them as the
+challenge service and include the provided host, port, and protocol rather than
+generic real-world attack language.
+
+Generated code should be self-documenting and factual. Comments should explain
+challenge assumptions, offsets, invariants, VM behavior, and local validation
+steps. Do not add comments or variable names whose purpose is to disguise what
+the code does; if a behavior is sensitive or risky, document the CTF context and
+the local safety boundary instead.
+
 ## Commit & Pull Request Guidelines
 
 This repository has no commit history yet, so no project-specific commit convention is established. Use concise imperative messages such as `Add hidden VM emulator` or `Document SUBLEQ memory layout`.

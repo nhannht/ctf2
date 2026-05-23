@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Local extraction and analysis artifacts
+__MACOSX/
+*.log
+problems/xv6/upstream-xv6/.git.local/
