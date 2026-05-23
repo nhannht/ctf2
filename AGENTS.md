@@ -1,0 +1,52 @@
+# Repository Guidelines
+
+## Project Structure & Module Organization
+
+This repository is a small Python CTF workspace. Keep challenge files under
+`problems/<challenge-name>/` and reserve the repository root for shared project
+metadata such as `pyproject.toml`, `uv.lock`, `.gitignore`, and this guide.
+
+- `problems/subleq/` contains the `chall` binary, SUBLEQ emulators, Z3 solver,
+  and `REVERSING_NOTES.md`.
+- `problems/100goilays/` contains the original `100goilays.zip` challenge
+  archive.
+
+There is currently no `tests/` directory. Add tests there if shared emulator logic is extracted from the scripts.
+
+## Build, Test, and Development Commands
+
+Use `uv` for dependency management and execution:
+
+- `uv sync` installs Python 3.13 dependencies from `pyproject.toml` and `uv.lock`.
+- `uv run python main.py` runs the default entry point.
+- `uv run python problems/subleq/solve.py` runs visible VM sanity checks.
+- `uv run python problems/subleq/solve_real.py` runs hidden VM emulator checks against sample inputs.
+- `uv run python problems/subleq/solve_z3.py` builds and solves the Z3 constraints.
+
+Solver scripts should read local assets with `Path(__file__).resolve().parent / "filename"` so each problem directory stays movable.
+
+## Coding Style & Naming Conventions
+
+Write Python with 4-space indentation and clear, script-local constants for binary offsets, cell indexes, and limits. Keep constants uppercase, functions lowercase with underscores, and byte-oriented variables explicit (`password: bytes`, `flag_bytes`). Prefer `pathlib.Path` for new path handling. Keep comments focused on reversing facts, invariants, or non-obvious VM behavior.
+
+## Testing Guidelines
+
+No formal test framework is configured yet. For now, use the script sanity checks above before committing changes. When adding tests, use `pytest`, place files under `tests/`, and name them `test_*.py`. Good initial coverage targets are `load_initial()`, VM halt/error conditions, fixed trace behavior, and known sample input outcomes.
+
+## Solver Approach
+
+Prefer elegant, efficient solutions that match the intended CTF weakness. If a
+solve path needs huge CPU time, excessive RAM, or long brute force for an easy
+challenge, stop and reassess the model instead of pushing harder. Use bounded
+experiments, timeouts, and memory-conscious tools; large resource use is usually
+a sign that the abstraction is wrong or an intended shortcut was missed.
+
+## Commit & Pull Request Guidelines
+
+This repository has no commit history yet, so no project-specific commit convention is established. Use concise imperative messages such as `Add hidden VM emulator` or `Document SUBLEQ memory layout`.
+
+Pull requests should include a short description, the commands run for verification, and any changed offsets or assumptions. Include relevant excerpts from `REVERSING_NOTES.md` when solver behavior changes.
+
+## Security & Configuration Tips
+
+Treat `chall` as an untrusted binary. Do not execute it directly unless necessary; prefer emulator-based analysis. Avoid committing generated caches, virtual environments, or bulky derived artifacts already covered by `.gitignore`.
