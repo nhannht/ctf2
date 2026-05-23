@@ -1,5 +1,8 @@
 # Reverse / Hide and Seek 2 Notes
 
+Historical working notes. The final solved path is documented in
+`WRITEUP.md`.
+
 This note preserves the current reversing state and strategy so we do not lose
 context.
 

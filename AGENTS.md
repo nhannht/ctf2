@@ -53,6 +53,11 @@ sample, or reduced-dimension version first, confirm the signal is real, and
 only then run the full solve. If the small experiment is slow, noisy, or
 resource-heavy, fix the approach before increasing the input size.
 
+When web research is useful, search for technical pattern knowledge, prior art,
+and general reversing techniques relevant to the challenge's structure. Do not
+search for leaked answers, direct writeups, or challenge-specific solves. Use
+the web to understand the class of problem better, not to bypass the solve.
+
 ## Communication Guidelines
 
 Keep notes, writeups, prompts, code comments, and filenames clearly scoped to
