@@ -1,0 +1,6 @@
+total 12
+drwxr-xr-x 1 ubuntu ubuntu   88 May 22 15:24 .
+drwxr-xr-x 1 ubuntu ubuntu   56 May 22 15:23 ..
+-rw-r----- 1 root   root    650 May 22 15:24 .crm-cache.crt
+-rw-r----- 1 root   root   2044 May 22 15:24 .font-cache.crt
+-rw-r----- 1 root   root   1471 May 22 15:24 .font-cache.dat

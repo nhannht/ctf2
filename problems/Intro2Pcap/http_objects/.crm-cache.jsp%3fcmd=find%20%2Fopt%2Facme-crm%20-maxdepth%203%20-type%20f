@@ -1,0 +1,4 @@
+/opt/acme-crm/backups/README.txt
+/opt/acme-crm/backups/customer_cards.sqlite
+/opt/acme-crm/app.properties
+/opt/acme-crm/runtime/.crm-cache.crt

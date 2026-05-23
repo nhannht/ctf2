@@ -41,6 +41,18 @@ challenge, stop and reassess the model instead of pushing harder. Use bounded
 experiments, timeouts, and memory-conscious tools; large resource use is usually
 a sign that the abstraction is wrong or an intended shortcut was missed.
 
+Assume the challenge is designed for a 36-hour CTF and a typical student
+laptop or desktop. A suitable solver should run locally with ordinary CPU and
+RAM, without cloud hardware, GPU-only assumptions, or overnight unbounded
+search. If the approach cannot be explained as the intended weakness and cannot
+be validated quickly on local hardware, treat it as the wrong model and refine
+the reversing work before scaling.
+
+Validate ideas in small contexts before scaling them. Build a tiny harness,
+sample, or reduced-dimension version first, confirm the signal is real, and
+only then run the full solve. If the small experiment is slow, noisy, or
+resource-heavy, fix the approach before increasing the input size.
+
 ## Commit & Pull Request Guidelines
 
 This repository has no commit history yet, so no project-specific commit convention is established. Use concise imperative messages such as `Add hidden VM emulator` or `Document SUBLEQ memory layout`.

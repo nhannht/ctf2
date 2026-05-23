@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "-c",
+        "WS_URL=$(curl -s http://127.0.0.1:9222/json/version | python3 -c \"import json,sys; print(json.load(sys.stdin)['webSocketDebuggerUrl'])\") && exec npx -y chrome-devtools-mcp@0.20.3 --wsEndpoint \"$WS_URL\" --no-usage-statistics"
+      ],
+      "env": {
+        "CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS": "1"
+      }
+    }
+  }
+}

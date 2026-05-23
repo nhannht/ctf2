@@ -1,0 +1,6 @@
+
+invoice,customer,total,status
+INV-2026-1001,Maya Tran,14850.00,paid
+INV-2026-1002,Khoa Nguyen,219.99,review
+INV-2026-1003,Iris Chen,8430.00,draft
+

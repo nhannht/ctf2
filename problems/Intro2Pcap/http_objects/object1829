@@ -1,0 +1,5 @@
+TTBX / HTTP/1.1
+Connection: close
+User-Agent: Mozilla/5.0 (compatible; Nmap Scripting Engine; https://nmap.org/book/nse.html)
+Host: crm.acme-corp.com:8080
+
