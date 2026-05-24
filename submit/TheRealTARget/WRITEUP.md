@@ -4,6 +4,8 @@ Category: `web`
 Status: `solved`  
 Flag: `HCMUS-CTF{CVE-2026-7774_Fr3sh_0ut_0f_th3_0v3n!}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/TheRealTARget`
+
 ## Summary
 
 The previous `TARget` intuition was the trap. This version does not shell out to

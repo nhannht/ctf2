@@ -4,6 +4,8 @@ Category: `web`
 Status: `solved`  
 Flag: `HCMUS-CTF{wh4t_4_5cr4ppy_v4ult_pr0t0typ3!!}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/PinkBlackVault`
+
 ## Summary
 
 The obvious red herring was the tiny JWT secret. The real bug was in the RPC

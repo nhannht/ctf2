@@ -4,6 +4,8 @@ Category: `web`
 Status: `solved`  
 Flag: `HCMUS-CTF{Tks_f0r_finding_7h3_c0r3_issu3s_4da8b6ad}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/CoreIssues`
+
 ## Summary
 
 The title was the hint. `Core Issues` meant ASP.NET Core, and the description

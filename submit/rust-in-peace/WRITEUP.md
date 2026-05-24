@@ -4,6 +4,8 @@ Category: `crypto`
 Status: `solved`  
 Flag: `HCMUS-CTF{TH3_0rAcl3_5P0K3_1N_R0Und5_ANd_tH3_tHR35H0LD_an5w3R3D_1N_P3rMuTaT10N2}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/rust-in-peace`
+
 ## Summary
 
 The hint was accurate: this challenge was not meant to be solved by grinding a

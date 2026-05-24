@@ -4,6 +4,8 @@ Category: `misc`
 Status: `solved`  
 Flag: `HCMUS-CTF{=^._.^=|||https://youtu.be/2yJgwwDcgV8?si=QOHkJZq6SsVX7T8H|||=^._.^=}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/NyankoDaisensou`
+
 ## Summary
 
 This was a Battle Cats save-state challenge, not a guessing challenge. The

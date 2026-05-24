@@ -4,6 +4,8 @@ Category: `reverse`
 Status: `solved`  
 Flag: `HCMUS-CTF{d1d_y0u_solv3_both_ch4lls_;))}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/Hide-and-Seek-2`
+
 ## Summary
 
 This binary really contains two different SUBLEQ problems.

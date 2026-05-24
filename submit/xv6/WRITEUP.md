@@ -4,6 +4,8 @@ Category: `pwn`
 Status: `solved`  
 Flag: `HCMUS-CTF{36_hours_is_not_enough_for_a_*real*_linux_kernel_CVE}`
 
+Source bundle: `https://github.com/nhannht/ctf2/tree/master/submit/xv6`
+
 ## Summary
 
 This challenge looked like a kernel-local-privilege-escalation problem inside
