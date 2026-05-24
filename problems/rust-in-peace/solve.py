@@ -106,6 +106,15 @@ def hex_le_from_u64(value: int) -> str:
     return value.to_bytes(BLOCK_BYTES, "little").hex()
 
 
+def split_hex_blocks(hex_text: str) -> list[int]:
+    if len(hex_text) % (2 * BLOCK_BYTES) != 0:
+        raise ValueError("hex payload length is not a whole number of blocks")
+    return [
+        u64_from_hex_le(hex_text[offset : offset + 2 * BLOCK_BYTES])
+        for offset in range(0, len(hex_text), 2 * BLOCK_BYTES)
+    ]
+
+
 def sboxes_from_hex_nibbles(hex_nibbles: list[int]) -> list[list[int]]:
     base: list[list[int]] = []
     for idx in range(4):
@@ -330,6 +339,11 @@ class ChallengeSession:
         self._recv_until(b"> ")
         return line
 
+    def query_blocks(self, mode: str, blocks: list[int]) -> list[int]:
+        payload = "".join(hex_le_from_u64(block) for block in blocks)
+        response = self.query(mode, payload)
+        return split_hex_blocks(response)
+
     def keepalive(self) -> None:
         self.query("E", "")
 
@@ -472,37 +486,189 @@ def recover_sboxes(
     raise RuntimeError("no valid model recovered")
 
 
+def build_consistency_records(
+    lifted_queries: dict[int, list[int]],
+    image_queries: dict[int, list[int]],
+) -> list[tuple[int, int, int, int, dict[tuple[int, int], int]]]:
+    records: list[tuple[int, int, int, int, dict[tuple[int, int], int]]] = []
+    for pos in range(NIBBLES):
+        cls = pos % 4
+        for input_value, lifted in enumerate(lifted_queries[pos]):
+            for output_value, image in enumerate(image_queries[pos]):
+                preimage = inverse_permute_bits(image)
+                constraints: dict[tuple[int, int], int] = {}
+                consistent = True
+                for nibble_index in range(NIBBLES):
+                    key = (nibble_index % 4, (lifted >> (4 * nibble_index)) & 0xF)
+                    value = (preimage >> (4 * nibble_index)) & 0xF
+                    previous = constraints.get(key)
+                    if previous is None:
+                        constraints[key] = value
+                    elif previous != value:
+                        consistent = False
+                        break
+                if consistent:
+                    records.append((pos, cls, input_value, output_value, constraints))
+    return records
+
+
+def recover_sboxes_from_records(
+    records: list[tuple[int, int, int, int, dict[tuple[int, int], int]]],
+) -> list[list[int]] | None:
+    domains: dict[tuple[int, int], set[int]] = {
+        (cls, input_value): set()
+        for cls in range(4)
+        for input_value in range(16)
+    }
+    for _, cls, input_value, output_value, _ in records:
+        domains[(cls, input_value)].add(output_value)
+
+    while True:
+        changed = False
+        for cls in range(4):
+            taken = {
+                next(iter(domains[(cls, input_value)]))
+                for input_value in range(16)
+                if len(domains[(cls, input_value)]) == 1
+            }
+            for input_value in range(16):
+                current = domains[(cls, input_value)]
+                if len(current) <= 1:
+                    continue
+                pruned = current - taken
+                if pruned and pruned != current:
+                    domains[(cls, input_value)] = pruned
+                    changed = True
+
+        if any(len(values) == 0 for values in domains.values()):
+            return None
+
+        fixed = {
+            key: next(iter(values))
+            for key, values in domains.items()
+            if len(values) == 1
+        }
+
+        filtered_records = []
+        for pos, cls, input_value, output_value, constraints in records:
+            if output_value not in domains[(cls, input_value)]:
+                continue
+            consistent = True
+            for key, value in constraints.items():
+                fixed_value = fixed.get(key)
+                if fixed_value is not None and fixed_value != value:
+                    consistent = False
+                    break
+                if value not in domains[key]:
+                    consistent = False
+                    break
+            if consistent:
+                filtered_records.append((pos, cls, input_value, output_value, constraints))
+
+        if len(filtered_records) != len(records):
+            records = filtered_records
+            changed = True
+
+        if not records:
+            return None
+
+        for key in domains:
+            surviving = {
+                output_value
+                for _, cls, input_value, output_value, _ in records
+                if key == (cls, input_value)
+            }
+            if surviving and surviving != domains[key]:
+                domains[key] = surviving
+                changed = True
+
+        if any(len(values) == 0 for values in domains.values()):
+            return None
+
+        if not changed:
+            break
+
+    if any(len(values) != 1 for values in domains.values()):
+        return None
+
+    return [
+        [next(iter(domains[(cls, input_value)])) for input_value in range(16)]
+        for cls in range(4)
+    ]
+
+
+def recover_sboxes_weak_instance(
+    session: ChallengeSession,
+    rounds: int,
+) -> list[list[int]] | None:
+    zero = session.query_blocks("E", [0])[0]
+    if zero != 0:
+        return None
+
+    lifted_queries: dict[int, list[int]] = {}
+    image_queries: dict[int, list[int]] = {}
+
+    for pos in range(NIBBLES):
+        lifted_inputs = [input_value << (4 * pos) for input_value in range(16)]
+        image_inputs = [permute_bits(input_value << (4 * pos)) for input_value in range(16)]
+        lifted_queries[pos] = [
+            permute_bits(value)
+            for value in session.query_blocks("E", lifted_inputs)
+        ]
+        image_queries[pos] = [
+            permute_bits(value)
+            for value in session.query_blocks("E", image_inputs)
+        ]
+
+    recovered = recover_sboxes_from_records(
+        build_consistency_records(lifted_queries, image_queries)
+    )
+    if recovered is None:
+        return None
+
+    probe_inputs = [
+        0,
+        (1 << 64) - 1,
+        0x0123456789ABCDEF,
+        0xFEDCBA9876543210,
+        0x1337133713371337,
+        0x4242424242424242,
+    ]
+    for block, oracle in zip(probe_inputs, session.query_blocks("E", probe_inputs), strict=True):
+        if encrypt_block(block, rounds, recovered) != oracle:
+            return None
+
+    return recovered
+
+
 def solve_instance(host: str, port: int, solver_timeout: int) -> None:
-    session = ChallengeSession(host, port)
-    try:
-        rounds = session.read_banner()
-        print(f"[+] connected: rounds={rounds}")
+    attempt = 0
+    while True:
+        attempt += 1
+        session = ChallengeSession(host, port)
+        try:
+            rounds = session.read_banner()
+            print(f"[+] attempt {attempt}: connected, rounds={rounds}")
 
-        rng = random.Random(0xC0DEC0DE)
-        enc_pairs, dec_pairs = collect_pairs(session, rng, enc_count=8, dec_count=4)
-        print(f"[+] collected {len(enc_pairs)} E-pairs and {len(dec_pairs)} D-pairs")
+            sboxes = recover_sboxes_weak_instance(session, rounds)
+            if sboxes is None:
+                print(f"[-] attempt {attempt}: instance not in the weak class, reconnecting")
+                continue
 
-        sboxes = recover_sboxes(
-            rounds=rounds,
-            enc_pairs=enc_pairs,
-            dec_pairs=dec_pairs,
-            timeout_s=solver_timeout,
-            keepalive=session.keepalive,
-        )
-        print("[+] recovered a model; entering challenge phase")
+            print(f"[+] attempt {attempt}: recovered weak-instance sboxes")
+            session.start_challenge()
+            for index in range(100):
+                challenge_hex = session.read_challenge()
+                challenge = u64_from_hex_le(challenge_hex)
+                response = encrypt_block(challenge, rounds, sboxes)
+                session.send_response(hex_le_from_u64(response))
+                if (index + 1) % 10 == 0:
+                    print(f"[+] solved {index + 1}/100")
 
-        session.start_challenge()
-        for index in range(100):
-            challenge_hex = session.read_challenge()
-            challenge = u64_from_hex_le(challenge_hex)
-            response = encrypt_block(challenge, rounds, sboxes)
-            session.send_response(hex_le_from_u64(response))
-            if (index + 1) % 10 == 0:
-                print(f"[+] solved {index + 1}/100")
-
-        print(session.read_remaining())
-    finally:
-        session.close()
+            print(session.read_remaining())
+            return
+        finally:
+            session.close()
 
 
 def main() -> None:

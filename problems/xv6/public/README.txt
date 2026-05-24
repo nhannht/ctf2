@@ -73,7 +73,7 @@ For example, if you build the xv6 in xv6-riscv/, you can run the original _init 
     ./send_file.py localhost 1337 xv6-riscv/user/_init
 
 Your program must be a statically-linked RISC-V ELF built against the xv6 user
-library (see the user/ directory for the standard utilities to model yours on, 
+library (see the user/ directory for the standard utilities to model yours on,
 especially the init.c file).
 
 Good luck trying to do priviledge escalation from userspace code execution

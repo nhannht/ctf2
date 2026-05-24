@@ -21,11 +21,11 @@ const uint32_t AUX_NUM_SAMPLES = 2;
 const int64_t  P_MOD = 65537;      // Plaintext modulus
 const int64_t  T_MIN = (1LL << 59);
 const int64_t  T_MAX = (1LL << 60);
-const double   ERROR_SIGMA = 2.0; 
+const double   ERROR_SIGMA = 2.0;
 const int      PORT = 1337;
 
 CryptoContext<DCRTPoly> cc;
-DCRTPoly T; 
+DCRTPoly T;
 DCRTPoly S;
 std::vector<DCRTPoly> B_samples;
 std::vector<DCRTPoly> S_samples;
@@ -178,7 +178,7 @@ std::string PolyToString(DCRTPoly p) {
     // Use CRT interpolation to get the coefficients mod q
     Poly p_reconstructed = p.CRTInterpolate();
     auto values = p_reconstructed.GetValues();
-    
+
     std::stringstream ss;
     ss << "[";
     for (size_t i = 0; i < values.GetLength(); i++) {
@@ -311,7 +311,7 @@ void handle_client(int client_fd) {
                 res << "B" << i << ": " << PolyToString(B_samples[i]) << "\n";
                 res << "S" << i << ": " << PolyToStringModQ(S_samples[i], main_q) << "\n";
             }
-           
+
             std::string out = res.str();
             send(client_fd, out.c_str(), out.length(), 0);
         }
@@ -331,7 +331,7 @@ void handle_client(int client_fd) {
             std::vector<int64_t> v_vals;
             int64_t val;
             while (ss >> val) v_vals.push_back(val);
-            
+
             if (v_vals.empty()) {
                 std::string err = "ERROR: Provide at least one message value.\n";
                 send(client_fd, err.c_str(), err.length(), 0);
@@ -341,29 +341,29 @@ void handle_client(int client_fd) {
             try {
                 std::stringstream ss_res;
                 Plaintext pt = cc->MakePackedPlaintext(v_vals);
-                
+
                 const auto& elementParams = cc->GetCryptoParameters()->GetElementParams();
 
                 pt->Encode();
                 DCRTPoly m_poly = pt->GetElement<DCRTPoly>();
                 m_poly.SetFormat(EVALUATION);
 
-                DCRTPoly::TugType tgg;  
+                DCRTPoly::TugType tgg;
                 DCRTPoly::DggType dgg(ERROR_SIGMA);
                 BigInteger r(std::uniform_int_distribution<uint64_t>(2, elementParams->GetParams()[0]->GetModulus().ConvertToInt() - 1)(rng));
                 ss_res << "r: " << r << "\n";
                 for (uint32_t i = 0; i < (uint32_t)num_samples; i++) {
                     DCRTPoly a(tgg, elementParams, EVALUATION);
                     DCRTPoly e = DCRTPoly(dgg, elementParams, EVALUATION);
-                    
+
                     // TODO DEBUG
                     // std::cout << "e[" << i << "] " << PolyToString(e) << std::endl;
-                    
+
                     DCRTPoly c0 = a * S + e * r + m_poly;
-                    
+
                     a.SetFormat(COEFFICIENT);
                     c0.SetFormat(COEFFICIENT);
-                    
+
                     ss_res << "SAMPLE " << i << "\n";
                     ss_res << "C1: " << PolyToString(a) << "\n";
                     ss_res << "C0: " << PolyToString(c0) << "\n";
