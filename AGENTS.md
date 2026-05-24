@@ -15,9 +15,12 @@ There is currently no `tests/` directory. Add tests there if shared emulator log
 
 ## Build, Test, and Development Commands
 
-Use `uv` for dependency management and execution:
+Use `uv` for dependency management and execution. Always work through the
+project-local `.venv` created by `uv venv`, and prefer `uv run ...` or
+`.venv/bin/...` over invoking `python` or `pip` directly:
 
-- `uv sync` installs Python 3.13 dependencies from `pyproject.toml` and `uv.lock`.
+- `uv venv` creates or refreshes the project-local virtual environment at `.venv`.
+- `uv sync` installs Python 3.12 dependencies from `pyproject.toml` and `uv.lock`.
 - `uv run python main.py` runs the default entry point.
 - `uv run python problems/subleq/solve.py` runs visible VM sanity checks.
 - `uv run python problems/subleq/solve_real.py` runs hidden VM emulator checks against sample inputs.
