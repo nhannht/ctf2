@@ -21,6 +21,7 @@ problems/xv6/upstream-xv6/.git.local/
 
 # Event prep private/bulky artifacts
 hcmusctf2026/*.pdf
+hcmusctf2026/
 
 # Large challenge assets and generated analysis
 problems/BadApple3/*.png
