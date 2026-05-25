@@ -21,6 +21,7 @@ same public combinations then recovered the AES key material.
 ## Artifacts
 
 - Challenge archive: `problems/crypto101/crypto101.zip`
+- Reconstructed solver: `problems/crypto101/solve.sage`
 - Included files inside the archive:
   - `challenge.sage`
   - `output.txt`
@@ -150,18 +151,22 @@ key = md5(str(S).encode()).digest()
 
 ## Reproduction
 
-We did not preserve a final one-shot repo-local solver script for this
-challenge. The solve was completed interactively from the shipped
-`challenge.sage` logic and `output.txt`, and the exact values we printed and
-used were the ones above:
+A repo-local one-shot solver has since been reconstructed and verified from the
+shipped archive:
 
-- recovered modulus prime `p`
-- recovered linear combination `S`
-- derived AES key `md5(str(S).encode()).digest()`
+```bash
+env HOME=/tmp sage problems/crypto101/solve.sage
+```
 
-So this page records the exact algebra and code fragments that produced the
-flag rather than pretending there was a cleaner retained command history.
+That solver derives the same recovered values from `output.txt`:
+
+- modulus prime `p`
+- curve parameters `a, b`
+- 96 short relations and 24 byte columns
+- final linear combination `S`
+- AES key `md5(str(S).encode()).digest()`
 
 ## Files
 
 - `problems/crypto101/crypto101.zip`
+- `problems/crypto101/solve.sage`

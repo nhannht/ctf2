@@ -13,6 +13,11 @@ key = md5(str(sum(Q)).encode()).digest()
 
 The goal is to recover `sum(Q)` and decrypt the AES-ECB ciphertext.
 
+## Artifacts
+
+- Challenge archive: `crypto101.zip`
+- Reconstructed one-shot solver: `solve.sage`
+
 ## Recovering the Curve
 
 For each public point `(x, y)`, the curve equation gives:
@@ -94,4 +99,12 @@ Decrypting the ciphertext with AES-ECB and PKCS#7 unpadding gives the flag.
 
 ```text
 HCMUS-CTF{tH3_L4tT1cE_w4$_r3dUc3D_bY_LLL_th3n_BKZ_b3t4_40_$H0rT_v3cT0r$_p4D1c_f0Rm4L_Gr0Up_L0G$_h3n$3L_L1fT$_m0d_p4_t0_p3_t0_p$_r3c0v3r_th3_k3y_fr0m_bYt3_c0mb0$_n0_m0r3_h0m3Br3W_CrYpT0$}
+```
+
+## Reproduction
+
+Run the retained solver:
+
+```bash
+env HOME=/tmp sage problems/crypto101/solve.sage
 ```
